@@ -30,6 +30,8 @@ jobs:
 
       - name: Setup, build, and upload Astro artifact
         uses: withastro/action@v3
+        with:
+          node-version: 22
 
       - name: Deploy to GitHub Pages
         id: deployment
