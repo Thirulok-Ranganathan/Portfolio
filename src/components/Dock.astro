@@ -4,27 +4,33 @@ const { pathname } = Astro.url;
 
 // Helper to determine if a menu path is selected
 const isActive = (path: string) => {
-  if (path === '/' && pathname === '/') return true;
-  if (path !== '/' && pathname.startsWith(path)) return true;
-  return false;
+  const base = import.meta.env.BASE_URL;
+  const normalizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`;
+  const normalizedTarget = `${base}${path.replace(/^\//, '')}`;
+  const normalizedTargetWithSlash = normalizedTarget.endsWith('/') ? normalizedTarget : `${normalizedTarget}/`;
+
+  if (path === '/') {
+    return normalizedPathname === base || normalizedPathname === `${base}/`;
+  }
+  return normalizedPathname.startsWith(normalizedTargetWithSlash) || normalizedPathname.startsWith(normalizedTarget);
 };
 ---
 
 <nav class="dock-nav glass-card fade-in">
   <div class="dock-menu">
-    <a href="/" class={`dock-link ${isActive('/') ? 'active' : ''}`} id="nav-home">
+    <a href={import.meta.env.BASE_URL} class={`dock-link ${isActive('/') ? 'active' : ''}`} id="nav-home">
       <span class="dock-icon">🏠</span>
       <span class="dock-label">Home</span>
     </a>
-    <a href="/projects" class={`dock-link ${isActive('/projects') ? 'active' : ''}`} id="nav-projects">
+    <a href={`${import.meta.env.BASE_URL}projects`} class={`dock-link ${isActive('/projects') ? 'active' : ''}`} id="nav-projects">
       <span class="dock-icon">💻</span>
       <span class="dock-label">Projects</span>
     </a>
-    <a href="/skills" class={`dock-link ${isActive('/skills') ? 'active' : ''}`} id="nav-skills">
+    <a href={`${import.meta.env.BASE_URL}skills`} class={`dock-link ${isActive('/skills') ? 'active' : ''}`} id="nav-skills">
       <span class="dock-icon">⚡</span>
       <span class="dock-label">Skills</span>
     </a>
-    <a href="/blog" class={`dock-link ${isActive('/blog') ? 'active' : ''}`} id="nav-blog">
+    <a href={`${import.meta.env.BASE_URL}blog`} class={`dock-link ${isActive('/blog') ? 'active' : ''}`} id="nav-blog">
       <span class="dock-icon">✍️</span>
       <span class="dock-label">Blog</span>
     </a>

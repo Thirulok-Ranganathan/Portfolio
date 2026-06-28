@@ -42,7 +42,7 @@ const getSkillColorClass = (skillName: string) => {
     <header class="hero-section">
       <div class="hero-avatar-container">
         <div class="avatar-image-wrapper">
-          <img src={config.avatar} alt={config.name} class="hero-avatar" />
+          <img src={`${import.meta.env.BASE_URL}${config.avatar.replace(/^\//, '')}`} alt={config.name} class="hero-avatar" />
         </div>
         {config.status.show && (
           <div class={`status-badge ${config.status.type}`}>
@@ -57,7 +57,7 @@ const getSkillColorClass = (skillName: string) => {
         <p class="hero-bio">{config.bio}</p>
         
         <div class="hero-actions">
-          <a href="/Thirulok_Ranganathan_Resume.pdf" download class="primary-button">
+          <a href={`${import.meta.env.BASE_URL}Thirulok_Ranganathan_Resume.pdf`} download class="primary-button">
             <span>📄 Download Resume</span>
           </a>
           <div class="hero-socials">
@@ -95,7 +95,7 @@ const getSkillColorClass = (skillName: string) => {
           <span class="section-tagline font-mono">💻 Showcase</span>
           <h2 class="section-title">Projects</h2>
         </div>
-        <a href="/projects" class="view-all-button desktop-only glass-card">
+        <a href={`${import.meta.env.BASE_URL}projects`} class="view-all-button desktop-only glass-card">
           View all projects <span class="arrow">→</span>
         </a>
       </div>
@@ -121,7 +121,7 @@ const getSkillColorClass = (skillName: string) => {
         })}
       </div>
 
-      <a href="/projects" class="view-all-button mobile-only primary-button">
+      <a href={`${import.meta.env.BASE_URL}projects`} class="view-all-button mobile-only primary-button">
         View all projects <span class="arrow">→</span>
       </a>
     </section>
@@ -133,7 +133,7 @@ const getSkillColorClass = (skillName: string) => {
           <span class="section-tagline font-mono">⚡ Specialties</span>
           <h2 class="section-title">Skills & Technologies</h2>
         </div>
-        <a href="/skills" class="view-all-button desktop-only glass-card">
+        <a href={`${import.meta.env.BASE_URL}skills`} class="view-all-button desktop-only glass-card">
           View all skills <span class="arrow">→</span>
         </a>
       </div>
@@ -154,7 +154,7 @@ const getSkillColorClass = (skillName: string) => {
         </div>
       </div>
 
-      <a href="/skills" class="view-all-button mobile-only primary-button">
+      <a href={`${import.meta.env.BASE_URL}skills`} class="view-all-button mobile-only primary-button">
         View all skills <span class="arrow">→</span>
       </a>
     </section>
@@ -166,14 +166,14 @@ const getSkillColorClass = (skillName: string) => {
           <span class="section-tagline font-mono">✍️ Written Articles</span>
           <h2 class="section-title">Recent Writings</h2>
         </div>
-        <a href="/blog" class="view-all-button desktop-only glass-card">
+        <a href={`${import.meta.env.BASE_URL}blog`} class="view-all-button desktop-only glass-card">
           View all posts <span class="arrow">→</span>
         </a>
       </div>
 
       <div class="articles-grid">
         {posts.map(post => (
-          <a href={`/blog/${post.id}`} class="article-card glass-card">
+          <a href={`${import.meta.env.BASE_URL}blog/${post.id}`} class="article-card glass-card">
             <div class="article-metadata">
               <span class="article-date">{formatDate(post.data.pubDate)}</span>
               <div class="article-tags">
@@ -189,7 +189,7 @@ const getSkillColorClass = (skillName: string) => {
         ))}
       </div>
 
-      <a href="/blog" class="view-all-button mobile-only primary-button">
+      <a href={`${import.meta.env.BASE_URL}blog`} class="view-all-button mobile-only primary-button">
         View all posts <span class="arrow">→</span>
       </a>
     </section>
