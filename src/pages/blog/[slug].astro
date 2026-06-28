@@ -23,6 +23,8 @@ const formatDate = (date: Date) => {
     day: 'numeric'
   });
 };
+
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 ---
 
 <Layout title={`${post.data.title} | ${config.name}`} description={post.data.description}>
@@ -31,7 +33,7 @@ const formatDate = (date: Date) => {
 
   <article class="container fade-in">
     <!-- Back to Articles Button -->
-    <a href={`${import.meta.env.BASE_URL}blog`} class="back-link glass-card">
+    <a href={`${base}blog`} class="back-link glass-card">
       <span class="arrow">←</span> Back to Articles
     </a>
     

@@ -2,9 +2,10 @@
 // src/components/Dock.astro
 const { pathname } = Astro.url;
 
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+
 // Helper to determine if a menu path is selected
 const isActive = (path: string) => {
-  const base = import.meta.env.BASE_URL;
   const normalizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`;
   const normalizedTarget = `${base}${path.replace(/^\//, '')}`;
   const normalizedTargetWithSlash = normalizedTarget.endsWith('/') ? normalizedTarget : `${normalizedTarget}/`;
@@ -18,19 +19,19 @@ const isActive = (path: string) => {
 
 <nav class="dock-nav glass-card fade-in">
   <div class="dock-menu">
-    <a href={import.meta.env.BASE_URL} class={`dock-link ${isActive('/') ? 'active' : ''}`} id="nav-home">
+    <a href={base} class={`dock-link ${isActive('/') ? 'active' : ''}`} id="nav-home">
       <span class="dock-icon">🏠</span>
       <span class="dock-label">Home</span>
     </a>
-    <a href={`${import.meta.env.BASE_URL}projects`} class={`dock-link ${isActive('/projects') ? 'active' : ''}`} id="nav-projects">
+    <a href={`${base}projects`} class={`dock-link ${isActive('/projects') ? 'active' : ''}`} id="nav-projects">
       <span class="dock-icon">💻</span>
       <span class="dock-label">Projects</span>
     </a>
-    <a href={`${import.meta.env.BASE_URL}skills`} class={`dock-link ${isActive('/skills') ? 'active' : ''}`} id="nav-skills">
+    <a href={`${base}skills`} class={`dock-link ${isActive('/skills') ? 'active' : ''}`} id="nav-skills">
       <span class="dock-icon">⚡</span>
       <span class="dock-label">Skills</span>
     </a>
-    <a href={`${import.meta.env.BASE_URL}blog`} class={`dock-link ${isActive('/blog') ? 'active' : ''}`} id="nav-blog">
+    <a href={`${base}blog`} class={`dock-link ${isActive('/blog') ? 'active' : ''}`} id="nav-blog">
       <span class="dock-icon">✍️</span>
       <span class="dock-label">Blog</span>
     </a>
