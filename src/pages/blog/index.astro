@@ -1,0 +1,172 @@
+---
+// src/pages/blog/index.astro
+import Layout from '../../layouts/Layout.astro';
+import config from '../../config.json';
+import { getCollection } from 'astro:content';
+import { getTagColor } from '../../utils/colorHelper';
+
+const posts = (await getCollection('blog'))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+---
+
+<Layout title={`Blog & Articles | ${config.name}`} description={`Read the latest blog posts and technical articles by ${config.name}.`}>
+  <div class="container fade-in">
+    <!-- Blog Header -->
+    <header class="blog-header reveal">
+      <span class="section-tagline font-mono">✍️ My writings</span>
+      <h1 class="blog-title">Articles & Insights</h1>
+      <p class="blog-subtitle">Thoughts on engineering performance, aesthetics, web components, and developer experience.</p>
+    </header>
+
+    <!-- Blog Posts List -->
+    <div class="posts-list reveal">
+      {posts.map(post => (
+        <a href={`/blog/${post.id}`} class="post-card glass-card">
+          <div class="post-metadata">
+            <span class="post-date">{formatDate(post.data.pubDate)}</span>
+              <div class="post-tags">
+                {post.data.tags.map(tag => (
+                  <span class={`tag ${getTagColor(tag)}`}>{tag}</span>
+                ))}
+              </div>
+          </div>
+          <h2 class="post-card-title">{post.data.title}</h2>
+          <p class="post-card-description">{post.data.description}</p>
+          <span class="post-card-link">Read article <span class="arrow">→</span></span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .blog-header {
+    margin-bottom: 56px;
+    max-width: 650px;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .section-tagline {
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+
+  .blog-title {
+    font-size: 2.5rem;
+    letter-spacing: -0.03em;
+    margin-top: 4px;
+    line-height: 1.15;
+  }
+
+  .blog-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  /* List layout */
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.1s;
+  }
+
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: border-color 0.3s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+  }
+
+  .post-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+  }
+
+  .post-metadata {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .post-date {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+
+
+  .post-card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    color: var(--color-text-primary);
+    transition: color 0.2s;
+  }
+
+  .post-card:hover .post-card-title {
+    color: var(--color-accent);
+  }
+
+  .post-card-description {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .post-card-link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+  }
+
+  .post-card-link .arrow {
+    transition: transform 0.2s;
+  }
+
+  .post-card:hover .post-card-link .arrow {
+    transform: translateX(4px);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .blog-title {
+      font-size: 2rem;
+    }
+    
+    .post-card {
+      padding: 24px;
+    }
+
+    .post-metadata {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  }
+</style>

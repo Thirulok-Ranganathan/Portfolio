@@ -1,0 +1,207 @@
+---
+// src/components/Dock.astro
+const { pathname } = Astro.url;
+
+// Helper to determine if a menu path is selected
+const isActive = (path: string) => {
+  if (path === '/' && pathname === '/') return true;
+  if (path !== '/' && pathname.startsWith(path)) return true;
+  return false;
+};
+---
+
+<nav class="dock-nav glass-card fade-in">
+  <div class="dock-menu">
+    <a href="/" class={`dock-link ${isActive('/') ? 'active' : ''}`} id="nav-home">
+      <span class="dock-icon">🏠</span>
+      <span class="dock-label">Home</span>
+    </a>
+    <a href="/projects" class={`dock-link ${isActive('/projects') ? 'active' : ''}`} id="nav-projects">
+      <span class="dock-icon">💻</span>
+      <span class="dock-label">Projects</span>
+    </a>
+    <a href="/skills" class={`dock-link ${isActive('/skills') ? 'active' : ''}`} id="nav-skills">
+      <span class="dock-icon">⚡</span>
+      <span class="dock-label">Skills</span>
+    </a>
+    <a href="/blog" class={`dock-link ${isActive('/blog') ? 'active' : ''}`} id="nav-blog">
+      <span class="dock-icon">✍️</span>
+      <span class="dock-label">Blog</span>
+    </a>
+  </div>
+  <div class="dock-divider"></div>
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+    <!-- Sun icon shown in Dark theme -->
+    <span class="toggle-icon dark-only">☀️</span>
+    <!-- Moon icon shown in Light theme -->
+    <span class="toggle-icon light-only">🌙</span>
+  </button>
+</nav>
+
+<style>
+  /* Theme toggle visibility settings */
+  .dark-only {
+    display: none;
+  }
+  :global(body.dark-theme) .dark-only {
+    display: inline-block;
+  }
+  :global(body.dark-theme) .light-only {
+    display: none;
+  }
+
+  .dock-nav {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 16px; /* Sleek rectangular rounded corners */
+    gap: 12px;
+    box-shadow: var(--shadow-dock);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    animation: slideDownFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .dock-menu {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .dock-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Hover and Active rectangular highlight styling */
+  .dock-link:hover {
+    background-color: rgba(249, 115, 22, 0.08); /* Soft orange rectangle */
+    color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+
+  .dock-link.active {
+    background-color: rgba(249, 115, 22, 0.14); /* Deeper orange rectangle for selection */
+    color: var(--color-accent);
+    border-color: rgba(249, 115, 22, 0.25);
+    font-weight: 600;
+  }
+
+  body.dark-theme .dock-link:hover {
+    background-color: rgba(251, 146, 60, 0.08);
+  }
+
+  body.dark-theme .dock-link.active {
+    background-color: rgba(251, 146, 60, 0.15);
+    border-color: rgba(251, 146, 60, 0.3);
+  }
+
+  .dock-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .dock-label {
+    display: inline-block;
+  }
+
+  .dock-divider {
+    width: 1px;
+    height: 20px;
+    background-color: var(--color-border);
+  }
+
+  .theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+
+  .theme-toggle:hover {
+    background-color: var(--color-border);
+    transform: rotate(15deg) scale(1.1);
+  }
+
+  .toggle-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  /* Keyframe for dock arrival */
+  @keyframes slideDownFadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  /* Responsive styling */
+  @media (max-width: 680px) {
+    .dock-nav {
+      top: auto;
+      bottom: 24px; /* Move dock to bottom on mobile for better thumb reach */
+      animation: slideUpFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    
+    @keyframes slideUpFadeIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .dock-label {
+      display: none; /* Hide text label on mobile, only show icons for space saving */
+    }
+    
+    .dock-menu {
+      gap: 8px;
+    }
+    
+    .dock-link {
+      padding: 8px;
+    }
+  }
+</style>
+
+<script>
+  const handleToggle = () => {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark-theme');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    }
+  };
+
+  // Run on page load and after every page transition swap
+  document.addEventListener('astro:page-load', handleToggle);
+</script>

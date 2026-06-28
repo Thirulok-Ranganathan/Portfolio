@@ -1,0 +1,317 @@
+---
+import '../styles/global.css';
+import Dock from '../components/Dock.astro';
+import config from '../config.json';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Creative developer portfolio website" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <ClientRouter />
+    <!-- Persist theme across page swaps during view transitions -->
+    <script is:inline>
+      const applyTheme = () => {
+        const theme = (() => {
+          if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+            return localStorage.getItem('theme');
+          }
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+          }
+          return 'light';
+        })();
+        
+        if (theme === 'dark') {
+          document.body.classList.add('dark-theme');
+        } else {
+          document.body.classList.remove('dark-theme');
+        }
+      };
+      
+      document.addEventListener('astro:after-swap', applyTheme);
+    </script>
+  </head>
+  <body>
+    <!-- Theme initialisation to avoid layout theme flash -->
+    <script is:inline>
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+      
+      if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+      }
+    </script>
+
+    <!-- Top-Left Logo Header -->
+    <header class="site-header">
+      <a href="/" class="logo-container">
+        <!-- Geometric TR Monogram SVG Logo -->
+        <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect class="logo-bg" width="100" height="100" rx="26" fill="var(--color-accent)" />
+          <path class="logo-t" d="M25 30H55V37H44V70H36V37H25V30Z" fill="#ffffff" />
+          <path class="logo-r-loop" d="M44 30H65C71 30 74 33 74 39C74 45 71 48 65 48H44V30Z" fill="#ffffff" opacity="0.9" />
+          <path class="logo-r-leg" d="M54 48L68 70H58L46 48H54Z" fill="#ffffff" />
+        </svg>
+        <span class="logo-name">{config.name}</span>
+      </a>
+    </header>
+
+    <!-- Center Floating Capsule Dock -->
+    <Dock />
+
+    <!-- Main Content -->
+    <main>
+      <slot />
+    </main>
+
+    <!-- Fixed background canvas for particle network -->
+    <canvas id="background-canvas"></canvas>
+
+    <!-- Interactive Mouse-Glow Background (Dark mode only) -->
+    <div id="mouse-glow" class="mouse-glow"></div>
+
+    <script>
+      const initReveal = () => {
+        const reveals = document.querySelectorAll('.reveal');
+        
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('active');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.05,
+          rootMargin: '0px 0px -40px 0px'
+        });
+
+        reveals.forEach(el => observer.observe(el));
+      };
+
+      const initMouseGlow = () => {
+        const glow = document.getElementById('mouse-glow');
+        if (!glow) return;
+
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mousemove', handleMouseMove);
+      };
+
+      const handleMouseMove = (e: MouseEvent) => {
+        const glow = document.getElementById('mouse-glow');
+        if (glow) {
+          glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+        }
+      };
+
+      // Canvas particles configuration & hooks
+      let animationFrameId: number | null = null;
+      let handleResize: (() => void) | null = null;
+      let handleMouseOut: (() => void) | null = null;
+      let handleCanvasMouseMove: ((e: MouseEvent) => void) | null = null;
+
+      const initBackgroundCanvas = () => {
+        const canvas = document.getElementById('background-canvas') as HTMLCanvasElement | null;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let particles: any[] = [];
+        let mouse = { x: null as number | null, y: null as number | null, radius: 150 };
+
+        // Clean up previous event listeners
+        if (handleResize) window.removeEventListener('resize', handleResize);
+        if (handleMouseOut) window.removeEventListener('mouseout', handleMouseOut);
+        if (handleCanvasMouseMove) window.removeEventListener('mousemove', handleCanvasMouseMove);
+
+        // Cancel previous animation loop to prevent frames stacking
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+        class Particle {
+          x: number;
+          y: number;
+          dx: number;
+          dy: number;
+          size: number;
+          color: string;
+
+          constructor(x: number, y: number, dx: number, dy: number, size: number, color: string) {
+            this.x = x;
+            this.y = y;
+            this.dx = dx;
+            this.dy = dy;
+            this.size = size;
+            this.color = color;
+          }
+          draw() {
+            if (!ctx) return;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+          }
+          update() {
+            if (!canvas) return;
+            // Bounce off edges
+            if (this.x > canvas.width || this.x < 0) {
+              this.dx = -this.dx;
+            }
+            if (this.y > canvas.height || this.y < 0) {
+              this.dy = -this.dy;
+            }
+
+            // Magnetic repel near cursor
+            if (mouse.x !== null && mouse.y !== null) {
+              let diffX = mouse.x - this.x;
+              let diffY = mouse.y - this.y;
+              let dist = Math.sqrt(diffX * diffX + diffY * diffY);
+              if (dist < mouse.radius) {
+                let force = (mouse.radius - dist) / mouse.radius;
+                this.x -= (diffX / dist) * force * 1.5;
+                this.y -= (diffY / dist) * force * 1.5;
+              }
+            }
+
+            this.x += this.dx;
+            this.y += this.dy;
+            this.draw();
+          }
+        }
+
+        const setupParticles = () => {
+          particles = [];
+          let density = (canvas.width * canvas.height) / 12000;
+          density = Math.min(density, 120);
+
+          const isDark = document.body.classList.contains('dark-theme');
+          const particleColor = isDark ? 'rgba(251, 146, 60, 0.4)' : 'rgba(249, 115, 22, 0.4)';
+
+          for (let i = 0; i < density; i++) {
+            let size = (Math.random() * 2) + 1;
+            let x = Math.random() * (canvas.width - size * 2) + size;
+            let y = Math.random() * (canvas.height - size * 2) + size;
+            let dx = (Math.random() * 0.4) - 0.2;
+            let dy = (Math.random() * 0.4) - 0.2;
+            particles.push(new Particle(x, y, dx, dy, size, particleColor));
+          }
+        };
+
+        const connect = () => {
+          const isDark = document.body.classList.contains('dark-theme');
+          const maxDistance = 110;
+
+          for (let a = 0; a < particles.length; a++) {
+            for (let b = a; b < particles.length; b++) {
+              let dx = particles[a].x - particles[b].x;
+              let dy = particles[a].y - particles[b].y;
+              let dist = Math.sqrt(dx * dx + dy * dy);
+
+              if (dist < maxDistance) {
+                let alpha = (1 - (dist / maxDistance)) * 0.12;
+                ctx.strokeStyle = isDark 
+                  ? `rgba(156, 163, 175, ${alpha})`
+                  : `rgba(101, 101, 105, ${alpha})`;
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(particles[a].x, particles[a].y);
+                ctx.lineTo(particles[b].x, particles[b].y);
+                ctx.stroke();
+              }
+            }
+
+            // Draw line to mouse
+            if (mouse.x !== null && mouse.y !== null) {
+              let dx = particles[a].x - mouse.x;
+              let dy = particles[a].y - mouse.y;
+              let dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < mouse.radius) {
+                let alpha = (1 - (dist / mouse.radius)) * 0.25;
+                ctx.strokeStyle = isDark 
+                  ? `rgba(251, 146, 60, ${alpha})`
+                  : `rgba(249, 115, 22, ${alpha})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particles[a].x, particles[a].y);
+                ctx.lineTo(mouse.x, mouse.y);
+                ctx.stroke();
+              }
+            }
+          }
+        };
+
+        handleResize = () => {
+          if (!canvas) return;
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          setupParticles();
+        };
+
+        handleMouseOut = () => {
+          mouse.x = null;
+          mouse.y = null;
+        };
+
+        handleCanvasMouseMove = (e: MouseEvent) => {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        };
+
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('mouseout', handleMouseOut);
+        window.addEventListener('mousemove', handleCanvasMouseMove);
+
+        const animate = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+          }
+          connect();
+          animationFrameId = requestAnimationFrame(animate);
+        };
+
+        // Set dimensions and start loop
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        setupParticles();
+        animate();
+
+        // Listen for theme toggle clicks to immediately adapt particle colors
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+          themeToggle.addEventListener('click', () => {
+            setTimeout(setupParticles, 50);
+          });
+        }
+      };
+
+      // Run on page load and after every page transition swap
+      document.addEventListener('astro:page-load', () => {
+        initReveal();
+        initMouseGlow();
+        initBackgroundCanvas();
+      });
+    </script>
+  </body>
+</html>

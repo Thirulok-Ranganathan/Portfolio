@@ -1,0 +1,333 @@
+---
+// src/pages/projects/index.astro
+import Layout from '../../layouts/Layout.astro';
+import config from '../../config.json';
+import { getTagColor } from '../../utils/colorHelper';
+---
+
+<Layout title={`Projects | ${config.name}`} description={`View technical projects and open-source applications built by ${config.name}.`}>
+  <div class="container fade-in">
+    <!-- Projects Header -->
+    <header class="projects-page-header reveal">
+      <span class="section-tagline font-mono">💻 Built applications</span>
+      <h1 class="projects-page-title">Projects & Creations</h1>
+      <p class="projects-page-subtitle">A collection of web frameworks, library tools, and interactive dashboards I have built.</p>
+    </header>
+
+    <!-- Projects List Grid -->
+    <div class="projects-grid reveal">
+      {config.projects.map((project, index) => (
+        <a href="#" class="project-card glass-card" data-index={index} style={`--animation-delay: ${index * 0.08}s`}>
+          <div class="project-card-header">
+            <span class="project-icon">{project.icon}</span>
+            <h2 class="project-card-title">{project.title}</h2>
+          </div>
+          <p class="project-card-description">{project.description}</p>
+          <div class="project-tags">
+            {project.tags.map(tag => (
+              <span class={`tag ${getTagColor(tag)}`}>{tag}</span>
+            ))}
+          </div>
+          <span class="project-link-label">Learn More <span class="arrow">→</span></span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<!-- Interactive Project Modal Overlay -->
+<div id="project-modal" class="modal-backdrop">
+  <div class="modal-card glass-card">
+    <button id="close-modal" class="close-modal-btn" aria-label="Close modal">✕</button>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="modal-icon" class="modal-icon"></span>
+        <h2 id="modal-title" class="modal-title"></h2>
+      </div>
+      <p id="modal-description" class="modal-description"></p>
+      
+      <div class="modal-section">
+        <h3>Technical Accomplishments</h3>
+        <ul id="modal-bullets" class="modal-bullets"></ul>
+      </div>
+      
+      <div class="modal-tags-container">
+        <h3>Technologies Utilized</h3>
+        <div id="modal-tags" class="project-tags"></div>
+      </div>
+      
+      <div class="modal-footer">
+        <a id="modal-link" href="#" target="_blank" class="primary-button-modal">
+          Visit Code Repository ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import config from '../../config.json';
+  import { getTagColor } from '../../utils/colorHelper';
+
+  const projectDetails = [
+    {
+      bullets: [
+        "Implemented a custom thread-safety lock mechanism to handle concurrent read/write operations without data corruption.",
+        "Designed an automated TTL (Time-To-Live) eviction algorithm that runs periodically to free system memory of expired keys.",
+        "Built high-throughput batch insert utilities supporting up to 50 keys in a single transaction with atomic rollbacks.",
+        "Exposed a simple CLI interface for quick local testing and integration."
+      ]
+    },
+    {
+      bullets: [
+        "Secures files using a dual-layer system: symmetric AES encryption for file contents, and asymmetric RSA encryption for the AES key.",
+        "Applies audio steganography to hide the encrypted RSA key inside local audio files, saving the audio locally.",
+        "Performs end-to-end decryption directly from cloud storage using the audio file to extract the key and reconstruct the plain file.",
+        "Enables file uploads and downloads directly through the app using integrated API keys, with plans to add user login authentication."
+      ]
+    },
+    {
+      bullets: [
+        "Built a native iOS image generation app using Swift and Apple's Xcode IDE.",
+        "Integrated OpenAI's DALL-E API to generate custom images from user prompt inputs dynamically.",
+        "Designed a mobile-first user interface with smooth transitions, custom image viewing, and sharing features.",
+        "Optimized network requests and image loading states using Swift's asynchronous concurrency features."
+      ]
+    },
+    {
+      bullets: [
+        "Developed a native macOS desktop ChatGPT client using Swift and Xcode.",
+        "Integrated OpenAI's chat completion APIs to provide responsive, real-time AI conversation streams.",
+        "Built native macOS keyboard shortcut bindings and window state controls for seamless desktop accessibility.",
+        "Implemented local file-based session persistence to securely cache and load user chat histories."
+      ]
+    },
+    {
+      bullets: [
+        "Built a native macOS desktop menu bar application using Swift and Apple's Xcode IDE.",
+        "Integrates directly with the macOS system status bar for low-profile, real-time repository monitoring.",
+        "Communicates with the GitHub REST API to query commit streams, issue status updates, and release flags.",
+        "Implemented local polling timers to fetch and parse repository activities with visual status updates in the status menu."
+      ]
+    },
+    {
+      bullets: [
+        "Developed a native Android chat application in Java using the Android SDK.",
+        "Integrated Socket.io (Socket.io-client-java) for full-duplex real-time messaging and channel synchronization.",
+        "Implemented local user presence tracking and dynamic status updates within chat rooms.",
+        "Configured Android Gradle build settings and optimized UI layouts for responsive mobile messaging."
+      ]
+    }
+  ];
+
+  const initModals = () => {
+    const cards = document.querySelectorAll('.project-card');
+    const modal = document.getElementById('project-modal');
+    const closeBtn = document.getElementById('close-modal');
+    
+    if (!modal || !closeBtn) return;
+
+    cards.forEach(card => {
+      // Avoid duplicate event listener binding if this runs multiple times
+      const newCard = card.cloneNode(true) as HTMLAnchorElement;
+      card.parentNode?.replaceChild(newCard, card);
+
+      newCard.addEventListener('click', (e) => {
+        e.preventDefault();
+        const indexStr = newCard.getAttribute('data-index');
+        if (indexStr === null) return;
+        const index = parseInt(indexStr);
+        const project = config.projects[index];
+        const details = projectDetails[index];
+
+        if (!project || !details) return;
+
+        // Populate modal contents
+        document.getElementById('modal-icon')!.innerText = project.icon;
+        document.getElementById('modal-title')!.innerText = project.title;
+        document.getElementById('modal-description')!.innerText = project.description;
+
+        // Populate bullets list
+        const bulletsUl = document.getElementById('modal-bullets')!;
+        bulletsUl.innerHTML = '';
+        details.bullets.forEach(bullet => {
+          const li = document.createElement('li');
+          li.innerText = bullet;
+          bulletsUl.appendChild(li);
+        });
+
+        // Populate tech tags
+        const tagsDiv = document.getElementById('modal-tags')!;
+        tagsDiv.innerHTML = '';
+        project.tags.forEach(tag => {
+          const span = document.createElement('span');
+          span.className = `tag ${getTagColor(tag)}`;
+          span.innerText = tag;
+          tagsDiv.appendChild(span);
+        });
+
+        // Populate links
+        const modalLink = document.getElementById('modal-link') as HTMLAnchorElement;
+        modalLink.href = project.link;
+        modalLink.innerText = project.link_type === 'github' ? 'Visit Code Repository ↗' : 'Visit Live Website ↗';
+
+        // Show modal
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    const closeModal = () => {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+    
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+  };
+
+  // Run on page load
+  initModals();
+
+  // Re-run on Astro view transition swaps
+  document.addEventListener('astro:after-swap', initModals);
+</script>
+
+<style>
+  .projects-page-header {
+    margin-bottom: 56px;
+    max-width: 650px;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .section-tagline {
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+
+  .projects-page-title {
+    font-size: 2.5rem;
+    letter-spacing: -0.03em;
+    margin-top: 4px;
+    line-height: 1.15;
+  }
+
+  .projects-page-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  /* Projects Grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.1s;
+  }
+
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    border-radius: 20px;
+    text-decoration: none;
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeInUpProject 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--animation-delay);
+    transition: border-color 0.25s, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s;
+  }
+
+  .project-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+  }
+
+  .project-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .project-icon {
+    font-size: 1.6rem;
+  }
+
+  .project-card-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .project-card-description {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 24px;
+    flex-grow: 1;
+  }
+
+  .project-tags {
+    margin-bottom: 24px;
+  }
+
+
+
+  .project-link-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: auto;
+  }
+
+  .project-link-label .arrow {
+    transition: transform 0.2s;
+  }
+
+  .project-card:hover .project-link-label .arrow {
+    transform: translate(2px, -2px);
+  }
+
+  /* Cascading Project Entrance Animation */
+  @keyframes fadeInUpProject {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .projects-page-title {
+      font-size: 2rem;
+    }
+    
+    .project-card {
+      padding: 24px;
+    }
+  }
+
+  .project-card {
+    cursor: pointer;
+  }
+</style>

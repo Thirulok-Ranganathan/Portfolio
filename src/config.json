@@ -1,0 +1,142 @@
+{
+  "name": "Thirulok Ranganathan",
+  "title": "Associate Software Engineer - II",
+  "bio": "Proactive Associate Software Engineer with hands-on experience in full-stack development and cloud-focused solutions. Skilled in API integration, serverless design, and cloud automation.",
+  "avatar": "/portrait.png",
+  "status": {
+    "show": true,
+    "text": "Now contributing to Optum😊",
+    "type": "info"
+  },
+  "skills_colors": {
+    "languages": "emerald",
+    "frameworks": "orange",
+    "cloud": "blue",
+    "devops": "purple",
+    "ai_engineering": "pink",
+    "tools": "indigo"
+  },
+  "tag_colors": {
+    "python": "emerald",
+    "fastapi": "emerald",
+    "javascript": "orange",
+    "node.js": "orange",
+    "express.js": "orange",
+    "spark": "orange",
+    "aws": "blue",
+    "gcp": "blue",
+    "cloud": "blue",
+    "terraform": "purple",
+    "docker": "purple",
+    "kubernetes": "purple",
+    "jenkins": "purple",
+    "ansible": "purple",
+    "git": "purple",
+    "vibe coding": "pink",
+    "ai": "pink",
+    "rag": "pink",
+    "agent": "pink",
+    "sql": "indigo",
+    "mongodb": "indigo",
+    "concurrency": "indigo",
+    "steganography": "indigo",
+    "cryptography": "indigo",
+    "cloud apis": "blue",
+    "websockets": "orange",
+    "socket.io": "orange",
+    "swift": "emerald",
+    "macos": "indigo",
+    "xcode": "indigo",
+    "github api": "purple",
+    "api integration": "orange",
+    "ci/cd": "purple",
+    "automation": "purple",
+    "database migration": "blue",
+    "json": "indigo",
+    "ios": "pink",
+    "android": "emerald",
+    "dall-e api": "pink",
+    "openai api": "pink",
+    "java": "emerald",
+    "mobile app": "purple"
+  },
+  "socials": {
+    "github": "https://github.com/Thirulok-Ranganathan",
+    "linkedin": "https://linkedin.com/in/thirulokranganathan",
+    "email": "mailto:thirulokranganathan@gmail.com"
+  },
+  "skills": [
+    { "name": "Python & FastAPI", "level": "Expert", "icon": "🐍" },
+    { "name": "JavaScript & Node.js", "level": "Expert", "icon": "⚡" },
+    { "name": "AI & Agent Engineering", "level": "Advanced", "icon": "🤖" },
+    { "name": "Cloud Infrastructure (AWS & GCP)", "level": "Advanced", "icon": "☁️" },
+    { "name": "DevOps & Terraform", "level": "Advanced", "icon": "🐳" },
+    { "name": "SQL & MongoDB", "level": "Advanced", "icon": "🗄️" }
+  ],
+  "skills_categories": {
+    "languages": ["Python", "JavaScript", "SQL", "HTML/CSS", "Node.js", "Java", "Swift"],
+    "frameworks": ["FastAPI", "Flask", "Express.js", "Spark", "Socket.io", "WebSockets", "UIKit / SwiftUI", "Android SDK"],
+    "cloud": ["AWS Cloud Services (EC2, S3, CloudWatch, IAM)", "GCP Cloud Services (Compute Engine, Cloud SQL, Load Balancer)", "GCP Database Migration Service"],
+    "devops": ["Terraform", "Docker", "Kubernetes", "Jenkins", "Ansible", "Git", "Prometheus", "Grafana", "CI/CD Pipelines"],
+    "ai_engineering": ["Vibe Coding", "AI Agent & Sub-Agent Architecture", "Codex Sub-Agent Skill Engineering", "Antigravity & Copilot Agent Workflows", "Retrieval-Augmented Generation (RAG)", "System Prompt Optimization"],
+    "tools": ["Postman", "VS Code", "MongoDB", "UiPath Studio", "Telebit", "Xcode", "Cryptography (AES/RSA)", "Audio Steganography", "GitHub API & REST Integrations"]
+  },
+  "projects": [
+    {
+      "title": "KeyValue DataStore",
+      "description": "Developed a Python-based key-value store with support for TTL, batch inserts (up to 50 keys), thread safety, and file locking mechanisms for concurrency handling.",
+      "tags": ["Python", "JSON", "Concurrency"],
+      "link": "https://github.com/Thirulok-Ranganathan/Key_Value_Data_Store",
+      "link_type": "github",
+      "icon": "💾"
+    },
+    {
+      "title": "SecureCloud Custom Drive",
+      "description": "Designed a secure cloud file system that encrypts files via AES-256, encrypts payloads via RSA-2048, and hides decryption keys inside local audio files using steganography. Handles direct API-based uploads and downloads.",
+      "tags": ["Python", "Cryptography", "Steganography", "Cloud APIs"],
+      "link": "https://github.com/Thirulok-Ranganathan/SecureCloud_Custom_drive",
+      "link_type": "github",
+      "icon": "🔒"
+    },
+    {
+      "title": "iGen-app",
+      "description": "Designed and built an iOS image generation application in Xcode using Swift. Integrates with OpenAI's DALL-E API to generate dynamic, prompt-based images directly on mobile devices.",
+      "tags": ["Swift", "iOS", "Xcode", "DALL-E API"],
+      "link": "https://github.com/Thirulok-Ranganathan/iGen-app",
+      "link_type": "github",
+      "icon": "🤖"
+    },
+    {
+      "title": "ChatGPT Clone macOS",
+      "description": "A native ChatGPT client for macOS developed in Xcode using Swift. Features robust session persistence, responsive markdown rendering for code syntax highlighting, and native menu integrations.",
+      "tags": ["Swift", "macOS", "Xcode", "OpenAI API"],
+      "link": "https://github.com/Thirulok-Ranganathan/ChatGPT-Clone-MacOS-Build",
+      "link_type": "github",
+      "icon": "💬"
+    },
+    {
+      "title": "Gitmon",
+      "description": "A macOS desktop menu bar application built with Swift and Xcode that monitors GitHub repository commit streams, issue status updates, and release flags in real-time.",
+      "tags": ["Swift", "macOS", "Xcode", "GitHub API"],
+      "link": "https://github.com/Thirulok-Ranganathan/Gitmon",
+      "link_type": "github",
+      "icon": "🐙"
+    },
+    {
+      "title": "Infoshare Chatapp",
+      "description": "A native Android real-time chat application built with Java. Utilizes socket connections for instant message transmission, multi-channel chatrooms, and status updates.",
+      "tags": ["Java", "Android", "Socket.io", "Mobile App"],
+      "link": "https://github.com/Thirulok-Ranganathan/Infoshare_chatapp",
+      "link_type": "github",
+      "icon": "👥"
+    }
+  ],
+  "certifications": [
+    "AWS Training – Cubensquare (2024)",
+    "DevOps Training – Cubensquare (2024)",
+    "RedHat Linux Training – Cubensquare (2024)",
+    "Getting Started with MongoDB Atlas",
+    "Certified Secure Computer User v2",
+    "UiPath Studio Family – Learnathon India (2022)"
+  ]
+}
